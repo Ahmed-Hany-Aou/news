@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Backend\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin Logout 
 Route::get('/admin/logout', [AdminController::class, 'Logout'])->name('admin.logout');
+
+// Admin Category All Routes 
+
+Route::get('/categories', [CategoryController::class, 'Index'])->name('categories');
+Route::get('/add/category', [CategoryController::class, 'AddCategory'])->name('add.category');
+Route::post('/store/category', [CategoryController::class, 'StoreCategory'])->name('store.category');
+
+Route::get('/edit/category/{id}', [CategoryController::class, 'EditCategory'])->name('edit.category');
+
+Route::post('/update/category/{id}', [CategoryController::class, 'UpdateCategory'])->name('update.category');
+
+Route::get('/delete/category/{id}', [CategoryController::class, 'DeleteCategory'])->name('delete.category');
+
+
 
 
 require __DIR__.'/auth.php';
