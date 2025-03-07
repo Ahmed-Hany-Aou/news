@@ -63,7 +63,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             <span class="nav-link">Navigation</span>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{{-- {{ route('dashboard')}} --}}">
+            <a class="nav-link" href="{{ route('dashboard')}} ">
               <span class="menu-icon">
                 <i class="mdi mdi-speedometer"></i>
               </span>
@@ -71,7 +71,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             </a>
           </li>
 
-@if(Auth::user()->category == 1)
+@if(Auth::user()->category == 0)
           <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <span class="menu-icon">
@@ -83,7 +83,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item">
-   <a class="nav-link" href="{{-- {{ route('categories') }} --}}">Category</a></li>
+   <a class="nav-link" href=" {{ route('categories') }} ">Category</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('subcategories') }} --}}">SubCategory</a></li>
               </ul>
             </div>
