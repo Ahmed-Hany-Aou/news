@@ -54,7 +54,7 @@
                         </thead>
                         <tbody>
                @php($i = 1)
-           @foreach($category as $row)
+           @foreach($categories  as $row)
       <tr>
         <td> {{ $i++ }} </td>
         <td> {{ $row->category_en }} </td>
@@ -70,7 +70,7 @@
                            
                         </tbody>
                       </table>
-                      {{ $category->links('pagination-links') }}
+                      {{$categories ->links('pagination-links') }}
                     </div>
                   </div>
                 </div>

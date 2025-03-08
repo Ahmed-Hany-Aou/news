@@ -3,83 +3,67 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use DB;
+use App\Http\Requests\CategoryRequest;
+use App\Services\CategoryServiceInterface;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
-{ 
+{
+    protected CategoryServiceInterface $categoryService;
 
+    public function __construct(CategoryServiceInterface $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
 
+    public function Index(): View
+    {
+        $categories = $this->categoryService->getAllCategories();
+        return view('backend.category.index', compact('categories'));
+    }
+
+    public function AddCategory(): View
+    {
+        return view('backend.category.create');
+    }
+
+    public function StoreCategory(CategoryRequest $request): RedirectResponse
+{
+    $data = $request->only(['category_en', 'category_hin']);
+    $this->categoryService->storeCategory($data);
+
+    return redirect()->route('categories')->with([
+        'message' => 'Category Inserted Successfully',
+        'alert-type' => 'success'
+    ]);
+}
+
+    public function EditCategory($id): View
+    {
+        $category = $this->categoryService->getCategoryById($id);
+        return view('backend.category.edit', compact('category'));
+    }
+
+    public function UpdateCategory(CategoryRequest $request, $id): RedirectResponse
+    {
+        $data = $request->only(['category_en', 'category_hin']); // Ensure $data is an array
+        $this->categoryService->updateCategory($data, $id);
     
-    public function Index(){
-    	$category = DB::table('categories')->orderBy('id','desc')->paginate(2);
-    	return view('backend.category.index',compact('category'));
+        return redirect()->route('categories')->with([
+            'message' => 'Category Updated Successfully',
+            'alert-type' => 'success'
+        ]);
     }
+    
 
+    public function DeleteCategory($id): RedirectResponse
+    {
+        $this->categoryService->deleteCategory($id);
 
-    public function AddCategory(){
-    	return view('backend.category.create');
+        return redirect()->route('categories')->with([
+            'message' => 'Category Deleted Successfully',
+            'alert-type' => 'success'
+        ]);
     }
-
-
-    public function StoreCategory(Request $request){
-
-    	 $validatedData = $request->validate([
-        'category_en' => 'required|unique:categories|max:255',
-        'category_hin' => 'required|unique:categories|max:255',
-       ]);
-
-    	 $data = array();
-    	 $data['category_en'] = $request->category_en;
-    	 $data['category_hin'] = $request->category_hin;
-    	 DB::table('categories')->insert($data);
-
-    	 $notification = array(
-    	 	'message' => 'Category Inserted Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('categories')->with($notification);
-    }
-
-
-    public function EditCategory($id){
-    	$category = DB::table('categories')->where('id',$id)->first();
-    	return view('backend.category.edit',compact('category'));
-    }
-
-    public function UpdateCategory(Request $request,$id){
-
-    	 $data = array();
-    	 $data['category_en'] = $request->category_en;
-    	 $data['category_hin'] = $request->category_hin;
-    	 DB::table('categories')->where('id',$id)->update($data);
-
-    	 $notification = array(
-    	 	'message' => 'Category Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('categories')->with($notification);
-
-    }
-
-
-    public function DeleteCategory($id){
-    	DB::table('categories')->where('id',$id)->delete();
-
-    	$notification = array(
-    	 	'message' => 'Category Deleted Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('categories')->with($notification);
-
-    }
-
-
-
-
-
-
 }
