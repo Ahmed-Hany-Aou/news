@@ -2,93 +2,74 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
+use App\Services\SubCategoryServiceInterface;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class SubCategoryController extends Controller
-{ 
+{
+    protected $subCategoryService;
 
-      //  public function __construct(){
-	//	parent::__construct();
-	//	$this->middleware('auth');
-   // }
-
-    
-     public function Index(){
-    	$subcategory = DB::table('subcategories')
-    		->join('categories','subcategories.category_id','categories.id')
-    		->select('subcategories.*','categories.category_en')
-    		->orderBy('id','desc')->paginate(4);
-    	return view('backend.subcategory.index',compact('subcategory'));
+    public function __construct(SubCategoryServiceInterface $subCategoryService)
+    {
+        $this->subCategoryService = $subCategoryService;
     }
 
-
-    public function AddSubCategory(){
-    	$category = DB::table('categories')->get();
-    	return view('backend.subcategory.create',compact('category'));
+    public function Index(): View
+    {
+        $subcategory = $this->subCategoryService->getAllSubCategories();
+        return view('backend.subcategory.index', compact('subcategory'));
     }
 
-
-    public function StoreSubCategory(Request $request){
-
-    	 $validatedData = $request->validate([
-        'subcategory_en' => 'required|unique:subcategories|max:255',
-        'subcategory_hin' => 'required|unique:subcategories|max:255',
-       ]);
-
-    	 $data = array();
-    	 $data['subcategory_en'] = $request->subcategory_en;
-    	 $data['subcategory_hin'] = $request->subcategory_hin;
-    	 $data['category_id'] = $request->category_id;
-    	 DB::table('subcategories')->insert($data);
-
-    	 $notification = array(
-    	 	'message' => 'SubCategory Inserted Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('subcategories')->with($notification);
+    public function AddSubCategory(): View
+    {
+        $category = $this->subCategoryService->getAllCategories();
+        return view('backend.subcategory.create', compact('category'));
     }
 
+    public function StoreSubCategory(Request $request): RedirectResponse
+    {
+        $validatedData = $request->validate([
+            'subcategory_en' => 'required|unique:subcategories|max:255',
+            'subcategory_hin' => 'required|unique:subcategories|max:255',
+        ]);
 
-    public function EditSubCategory($id){
-    	$subcategory = DB::table('subcategories')->where('id',$id)->first();
-    	$category = DB::table('categories')->get();
-    	return view('backend.subcategory.edit',compact('subcategory','category'));
+        $data = $request->only(['subcategory_en', 'subcategory_hin', 'category_id']);
+        $this->subCategoryService->storeSubCategory($data);
 
+        return redirect()->route('subcategories')->with([
+            'message' => 'SubCategory Inserted Successfully',
+            'alert-type' => 'success'
+        ]);
     }
 
-
-    public function UpdateSubCategory(Request $request, $id){
-
-         $data = array();
-    	 $data['subcategory_en'] = $request->subcategory_en;
-    	 $data['subcategory_hin'] = $request->subcategory_hin;
-    	 $data['category_id'] = $request->category_id;
-    	 DB::table('subcategories')->where('id',$id)->update($data);
-
-    	 $notification = array(
-    	 	'message' => 'SubCategory Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('subcategories')->with($notification);
+    public function EditSubCategory($id): View
+    {
+        $subcategory = $this->subCategoryService->getSubCategoryById($id);
+        $category = $this->subCategoryService->getAllCategories();
+        return view('backend.subcategory.edit', compact('subcategory', 'category'));
     }
 
+    public function UpdateSubCategory(Request $request, $id): RedirectResponse
+    {
+        $data = $request->only(['subcategory_en', 'subcategory_hin', 'category_id']);
+        $this->subCategoryService->updateSubCategory($data, $id);
 
-    public function DeleteSubCategory($id){
-    	DB::table('subcategories')->where('id',$id)->delete();
-
-    	$notification = array(
-    	 	'message' => 'SubCategory Deleted Successfully',
-    	 	'alert-type' => 'error'
-    	 );
-
-    	 return Redirect()->route('subcategories')->with($notification);
+        return redirect()->route('subcategories')->with([
+            'message' => 'SubCategory Updated Successfully',
+            'alert-type' => 'success'
+        ]);
     }
 
+    public function DeleteSubCategory($id): RedirectResponse
+    {
+        $this->subCategoryService->deleteSubCategory($id);
 
-
-
+        return redirect()->route('subcategories')->with([
+            'message' => 'SubCategory Deleted Successfully',
+            'alert-type' => 'error'
+        ]);
+    }
 }
