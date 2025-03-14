@@ -91,7 +91,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
    @else
    @endif       
 
-@if(Auth::user()->district == 1)
+@if(Auth::user()->district == 0)
  <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#district" aria-expanded="false" aria-controls="district">
               <span class="menu-icon">
@@ -102,7 +102,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             </a>
             <div class="collapse" id="district">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('district') }} --}}">District </a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('district') }}">District </a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('subdistrict') }} --}}"> SubDistrict </a></li>
               </ul>
             </div>
