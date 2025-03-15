@@ -2,88 +2,69 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use DB;
+use Illuminate\Routing\Controller as BaseController;
 
-class DistrictController extends Controller
+use App\Http\Requests\DistrictRequest;
+use App\Services\DistrictServiceInterface;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
+class DistrictController extends BaseController
 {
+    protected DistrictServiceInterface $districtService;
 
-      //  public function __construct(){
-      //  $this->middleware('auth');
-   // }
-
-    
-        public function Index(){
-    	$district = DB::table('districts')->orderBy('id','desc')->paginate(3);
-    	return view('backend.district.index',compact('district'));
+    // ✅ Apply auth middleware
+    public function __construct(DistrictServiceInterface $districtService)
+    {
+        $this->middleware('auth'); // 🔹 Ensure only authenticated users can access
+        $this->districtService = $districtService;
     }
 
-
-        public function AddDistrict(){
-    	return view('backend.district.create');
+    public function Index(): View
+    {
+        $districts = $this->districtService->getAllDistricts();
+        return view('backend.district.index', compact('districts'));
     }
 
-
-    public function StoreDistrict(Request $request){
-
-    	 $validatedData = $request->validate([
-        'district_en' => 'required|unique:districts|max:255',
-        'district_hin' => 'required|unique:districts|max:255',
-       ]);
-
-    	 $data = array();
-    	 $data['district_en'] = $request->district_en;
-    	 $data['district_hin'] = $request->district_hin;
-    	 DB::table('districts')->insert($data);
-
-    	 $notification = array(
-    	 	'message' => 'District Inserted Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('district')->with($notification);
+    public function AddDistrict(): View
+    {
+        return view('backend.district.create');
     }
 
+    public function StoreDistrict(DistrictRequest $request): RedirectResponse
+    {
+        $this->districtService->storeDistrict($request->validated());
 
-
-  public function EditDistrict($id){
-    	$district = DB::table('districts')->where('id',$id)->first();
-    	return view('backend.district.edit',compact('district'));
+        return redirect()->route('district')->with([
+            'message' => 'District Inserted Successfully',
+            'alert-type' => 'success'
+        ]);
     }
 
-
-
-public function UpdateDistrict(Request $request,$id){
-
-    	 $data = array();
-    	 $data['district_en'] = $request->district_en;
-    	 $data['district_hin'] = $request->district_hin;
-    	 DB::table('districts')->where('id',$id)->update($data);
-
-    	 $notification = array(
-    	 	'message' => 'District Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('district')->with($notification);
-
+    public function EditDistrict($id): View
+    {
+        $district = $this->districtService->getDistrictById($id);
+        return view('backend.district.edit', compact('district'));
     }
 
+    public function UpdateDistrict(DistrictRequest $request, $id): RedirectResponse
+    {
+        $this->districtService->updateDistrict($request->validated(), $id);
 
-public function DeleteDistrict($id){
-    	DB::table('districts')->where('id',$id)->delete();
-
-    	$notification = array(
-    	 	'message' => 'District Deleted Successfully',
-    	 	'alert-type' => 'error'
-    	 );
-
-    	 return Redirect()->route('district')->with($notification);
+        return redirect()->route('district')->with([
+            'message' => 'District Updated Successfully',
+            'alert-type' => 'success'
+        ]);
     }
 
+    public function DeleteDistrict($id): RedirectResponse
+    {
+        $this->districtService->deleteDistrict($id);
 
+        return redirect()->route('district')->with([
+            'message' => 'District Deleted Successfully',
+            'alert-type' => 'error'
+        ]);
+    }
+}
 
-
-
-} 
