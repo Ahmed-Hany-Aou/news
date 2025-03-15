@@ -54,7 +54,7 @@
                         </thead>
                         <tbody>
                @php($i = 1)
-           @foreach($district as $row)
+           @foreach($districts as $row)
       <tr>
         <td> {{ $i++ }} </td>
         <td> {{ $row->district_en }} </td>
@@ -70,7 +70,7 @@
                            
                         </tbody>
                       </table>
-                      {{ $district->links('pagination-links') }}
+                      {{ $districts->links('pagination-links') }}
                     </div>
                   </div>
                 </div>
