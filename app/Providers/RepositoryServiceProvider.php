@@ -10,6 +10,11 @@ use App\Repositories\CategoryRepository;
 use App\Services\CategoryServiceInterface;
 use App\Services\CategoryService;
 
+use App\Repositories\DistrictRepositoryInterface;
+use App\Repositories\DistrictRepository;
+use App\Services\DistrictServiceInterface;
+use App\Services\DistrictService;
+
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -29,6 +34,9 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Services\SubCategoryServiceInterface::class,
             \App\Services\SubCategoryService::class
         );
+
+        $this->app->bind(DistrictRepositoryInterface::class, DistrictRepository::class);
+        $this->app->bind(DistrictServiceInterface::class, DistrictService::class);
     }
 
     /**

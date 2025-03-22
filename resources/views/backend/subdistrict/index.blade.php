@@ -33,11 +33,11 @@
 <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">District Page </h4>
+                    <h4 class="card-title">SubDistrict Page </h4>
 
 
               <div class="template-demo">
-  <a href="{{ route('add.district')  }}"><button type="button" class="btn btn-primary btn-fw" style="float: right;">Add District</button></a>	              	
+  <a href="{{ route('add.subdistrict')  }}"><button type="button" class="btn btn-primary btn-fw" style="float: right;">Add SubDistrict</button></a>	              	
               </div>
                     
       
@@ -46,23 +46,25 @@
                         <thead>
                           <tr>
                             <th> # </th>
-                            <th>District English </th>
-                            <th>District Hindi </th>
+                            <th> SubDistrict English </th>
+                            <th> SubDistrict Hindi </th>
+                            <th> District Name </th>
                             <th> Action </th>
                              
                           </tr>
                         </thead>
                         <tbody>
                @php($i = 1)
-           @foreach($districts as $row)
+           @foreach($subdistrict as $row)
       <tr>
         <td> {{ $i++ }} </td>
-        <td> {{ $row->district_en }} </td>
+        <td> {{ $row->subdistrict_en }} </td>
          
-        <td>{{ $row->district_hin }} </td>
+        <td>{{ $row->subdistrict_hin }} </td>
+        <td>{{ $row->district_en }} </td>
         <td> 
-    <a href="{{ route('edit.district',$row->id) }}" class="btn btn-info">Edit</a>
-    <a href="{{ route('delete.district',$row->id) }}" onclick="return confirm('Are you sure to delete')" class="btn btn-danger">Delete</a>
+    <a href="{{ route('edit.subdistrict',$row->id) }}" class="btn btn-info">Edit</a>
+    <a href="{{ route('delete.subdistrict',$row->id) }}" onclick="return confirm('Are you sure to delete')" class="btn btn-danger">Delete</a>
 
          </td>
       </tr>
@@ -70,18 +72,13 @@
                            
                         </tbody>
                       </table>
-                      {{ $districts->links('pagination-links') }}
+                      {{ $subdistrict->links('pagination-links') }}
                     </div>
                   </div>
                 </div>
               </div>
 
 
- 
-
-
-
-
-
+  
 
 @endsection

@@ -103,7 +103,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             <div class="collapse" id="district">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href=" {{ route('district') }}">District </a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('subdistrict') }} --}}"> SubDistrict </a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('subdistrict') }}"> SubDistrict </a></li>
               </ul>
             </div>
           </li>
