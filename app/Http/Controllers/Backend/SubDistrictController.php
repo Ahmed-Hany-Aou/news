@@ -3,92 +3,84 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\SubDistrictRepositoryInterface;
+use App\Http\Requests\SubDistrictRequest;
 use Illuminate\Http\Request;
-use DB;
 
 class SubDistrictController extends Controller
 {
-      
- //   public function __construct(){
-   //     $this->middleware('auth');
-    //}
+    protected $subDistrictRepository;
 
-    
-      public function Index(){
-    	$subdistrict = DB::table('subdistricts')
-    		->join('districts','subdistricts.district_id','districts.id')
-    		->select('subdistricts.*','districts.district_en')
-    		->orderBy('id','desc')->paginate(4);
-    	return view('backend.subdistrict.index',compact('subdistrict'));
+    public function __construct(SubDistrictRepositoryInterface $subDistrictRepository)
+    {
+        // $this->middleware('auth'); // Uncomment if needed
+        $this->subDistrictRepository = $subDistrictRepository;
     }
 
- public function AddSubDistrict(){
-    	$district = DB::table('districts')->get();
-    	return view('backend.subdistrict.create',compact('district'));
+    public function Index()
+    {
+        $subdistrict = $this->subDistrictRepository->all();
+        return view('backend.subdistrict.index', compact('subdistrict'));
     }
 
-
-public function StoreSubDistrict(Request $request){
-
-    	 $validatedData = $request->validate([
-        'subdistrict_en' => 'required|unique:subdistricts|max:255',
-        'subdistrict_hin' => 'required|unique:subdistricts|max:255',
-       ]);
-
-    	 $data = array();
-    	 $data['subdistrict_en'] = $request->subdistrict_en;
-    	 $data['subdistrict_hin'] = $request->subdistrict_hin;
-    	 $data['district_id'] = $request->district_id;
-    	 DB::table('subdistricts')->insert($data);
-
-    	 $notification = array(
-    	 	'message' => 'SubDistrict Inserted Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('subdistrict')->with($notification);
+    public function AddSubDistrict()
+    {
+        $district = $this->subDistrictRepository->getDistricts();
+        return view('backend.subdistrict.create', compact('district'));
     }
 
+    public function StoreSubDistrict(SubDistrictRequest $request)
+    {
+        $data = [
+            'subdistrict_en' => $request->subdistrict_en,
+            'subdistrict_hin' => $request->subdistrict_hin,
+            'district_id' => $request->district_id,
+        ];
 
-  public function EditSubDistrict($id){
-    	$subdistrict = DB::table('subdistricts')->where('id',$id)->first();
-    	$district = DB::table('districts')->get();
-    	return view('backend.subdistrict.edit',compact('subdistrict','district'));
+        $this->subDistrictRepository->create($data);
 
+        $notification = [
+            'message' => 'SubDistrict Inserted Successfully',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->route('subdistrict')->with($notification);
     }
 
-
-    public function UpdateSubDistrict(Request $request,$id){
-
-         $data = array();
-    	 $data['subdistrict_en'] = $request->subdistrict_en;
-    	 $data['subdistrict_hin'] = $request->subdistrict_hin;
-    	 $data['district_id'] = $request->district_id;
-    	 DB::table('subdistricts')->where('id',$id)->update($data);
-
-    	 $notification = array(
-    	 	'message' => 'SubDistrict Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('subdistrict')->with($notification);
+    public function EditSubDistrict($id)
+    {
+        $subdistrict = $this->subDistrictRepository->find($id);
+        $district = $this->subDistrictRepository->getDistricts();
+        return view('backend.subdistrict.edit', compact('subdistrict', 'district'));
     }
 
+    public function UpdateSubDistrict(SubDistrictRequest $request, $id)
+    {
+        $data = [
+            'subdistrict_en' => $request->subdistrict_en,
+            'subdistrict_hin' => $request->subdistrict_hin,
+            'district_id' => $request->district_id,
+        ];
 
- public function DeleteSubDistrict($id){
-    	DB::table('subdistricts')->where('id',$id)->delete();
+        $this->subDistrictRepository->update($id, $data);
 
-    	$notification = array(
-    	 	'message' => 'SubDistrict Deleted Successfully',
-    	 	'alert-type' => 'error'
-    	 );
+        $notification = [
+            'message' => 'SubDistrict Updated Successfully',
+            'alert-type' => 'success'
+        ];
 
-    	 return Redirect()->route('subdistrict')->with($notification);
+        return redirect()->route('subdistrict')->with($notification);
     }
 
+    public function DeleteSubDistrict($id)
+    {
+        $this->subDistrictRepository->delete($id);
 
+        $notification = [
+            'message' => 'SubDistrict Deleted Successfully',
+            'alert-type' => 'error'
+        ];
 
-
-
+        return redirect()->route('subdistrict')->with($notification);
+    }
 }
- 
