@@ -15,6 +15,8 @@ use App\Repositories\DistrictRepository;
 use App\Services\DistrictServiceInterface;
 use App\Services\DistrictService;
 
+
+
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -37,6 +39,7 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(DistrictRepositoryInterface::class, DistrictRepository::class);
         $this->app->bind(DistrictServiceInterface::class, DistrictService::class);
+       // $this->app->bind(\App\Repositories\SubDistrictRepositoryInterface::class, \App\Repositories\SubDistrictRepository::class);
     }
 
     /**
