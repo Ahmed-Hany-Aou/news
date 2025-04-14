@@ -110,7 +110,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
    @else
    @endif   
 
-@if(Auth::user()->post == 1)
+@if(Auth::user()->post == 0)
 <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#post" aria-expanded="false" aria-controls="post">
               <span class="menu-icon">
@@ -121,8 +121,8 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             </a>
             <div class="collapse" id="post">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('create.post') }} --}}">Add Post </a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('all.post') }} --}}"> All Post </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('create.post') }} ">Add Post </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('all.post') }} "> All Post </a></li>
               </ul>
             </div>
           </li>
