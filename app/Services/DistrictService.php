@@ -14,27 +14,27 @@ class DistrictService implements DistrictServiceInterface
 
     public function getAllDistricts()
     {
-        return $this->districtRepository->getAll();
+        return $this->districtRepository->getAllDistricts();
     }
 
     public function storeDistrict(array $data)
     {
-        return $this->districtRepository->store($data);
+        // Logic to store a district
     }
 
     public function getDistrictById($id)
     {
-        return $this->districtRepository->getById($id);
+        // Logic to fetch a district by ID
     }
 
     public function updateDistrict(array $data, $id)
     {
-        return $this->districtRepository->update($data, $id);
+        // Logic to update a district
     }
 
     public function deleteDistrict($id)
     {
-        return $this->districtRepository->delete($id);
+        // Logic to delete a district
     }
 }
 
