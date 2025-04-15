@@ -19,9 +19,9 @@ class EnhancedCategoryService implements CategoryServiceInterface
         return $this->categoryRepository->getAll($perPage);
     }
 
-    public function storeCategory(Request $request)
+    public function storeCategory(array $data)
     {
-        return $this->categoryRepository->store($request->all());
+        return $this->categoryRepository->store($data);
     }
 
     public function getCategoryById($id)
@@ -29,9 +29,9 @@ class EnhancedCategoryService implements CategoryServiceInterface
         return $this->categoryRepository->getById($id);
     }
 
-    public function updateCategory(Request $request, $id)
+    public function updateCategory(array $data, $id)
     {
-        return $this->categoryRepository->update($request->all(), $id);
+        return $this->categoryRepository->update($data, $id);
     }
 
     public function deleteCategory($id)
