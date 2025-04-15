@@ -57,12 +57,12 @@
                         </thead>
                         <tbody>
                @php($i = 1)
-           @foreach($post as $row)
+           @foreach($posts as $row)
       <tr>
         <td> {{ $i++ }} </td>
         <td> {{ Str::limit($row->title_en , 10) }} </td>
-        <td> {{ $row->category_en }} </td>
-        <td> {{ $row->district_en }} </td>
+        <td> {{ $row->category->category_en ?? 'N/A' }} </td>
+        <td> {{ $row->district->district_en ?? 'N/A' }} </td>
         <td> <img src="{{ $row->image }}" style="width: 50px; height: 50px;"> </td>
          
         <td>{{ Carbon\Carbon::parse($row->post_date)->diffForHumans() }} </td>
@@ -76,7 +76,7 @@
                            
                         </tbody>
                       </table>
-                      {{ $post->links('pagination-links') }}
+                      {{ $posts->links('pagination-links') }}
                     </div>
                   </div>
                 </div>

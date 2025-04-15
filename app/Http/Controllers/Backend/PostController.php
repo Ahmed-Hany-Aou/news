@@ -2,76 +2,55 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest;
+use App\Services\PostServiceInterface;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-//use Intervention\Image\Facades\Image;
-use Intervention\Image\Facades\Image as Image;
+use App\Models\Post;
+//use App\Http\Requests\PostRequest;
 
 
 class PostController extends Controller
 {
-    public function __construct()
+    protected PostServiceInterface $postService;
+
+    public function __construct(PostServiceInterface $postService)
     {
-        $this->middleware('auth');
+        $this->postService = $postService;
     }
 
-    public function index()
+    // Show all posts
+    public function index(): View
     {
-        $post = DB::table('posts')
-            ->join('categories', 'posts.category_id', 'categories.id')
-            ->join('subcategories', 'posts.subcategory_id', 'subcategories.id')
-            ->join('districts', 'posts.district_id', 'districts.id')
-            ->join('subdistricts', 'posts.subdistrict_id', 'subdistricts.id')
-            ->select('posts.*', 'categories.category_en', 'subcategories.subcategory_en', 'districts.district_en', 'subdistricts.subdistrict_en')
-            ->orderBy('id', 'desc')->paginate(5);
-
-        return view('backend.post.index', compact('post'));
+        $posts = $this->postService->getAllPosts();
+        return view('backend.post.index', compact('posts'));
     }
 
-    public function create()
+    // Show create post form
+    public function create(): View
     {
         $category = DB::table('categories')->get();
         $district = DB::table('districts')->get();
         return view('backend.post.create', compact('category', 'district'));
     }
 
-    public function StorePost(Request $request)
+    // Store a new post
+    public function store(PostRequest $request): RedirectResponse
     {
-        $validatedData = $request->validate([
-            'category_id' => 'required',
-            'district_id' => 'required',
+        $data = $request->only([
+            'title_en', 'title_hin', 'category_id', 'subcategory_id', 'district_id',
+            'subdistrict_id', 'tags_en', 'tags_hin', 'details_en', 'details_hin', 'headline',
+            'first_section', 'first_section_thumbnail', 'bigthumbnail', 'image'
         ]);
     
-        $data = array();
-        $data['title_en'] = $request->title_en;
-        $data['title_hin'] = $request->title_hin;
-        $data['user_id'] = Auth::id();
-        $data['category_id'] = $request->category_id;
-        $data['subcategory_id'] = $request->subcategory_id;
-        $data['district_id'] = $request->district_id;
-        $data['subdistrict_id'] = $request->subdistrict_id;
-        $data['tags_en'] = $request->tags_en;
-        $data['tags_hin'] = $request->tags_hin;
-        $data['details_en'] = $request->details_en;
-        $data['details_hin'] = $request->details_hin;
-        $data['headline'] = $request->headline;
-        $data['first_section'] = $request->first_section;
-        $data['first_section_thumbnail'] = $request->first_section_thumbnail;
-        $data['bigthumbnail'] = $request->bigthumbnail;
-        $data['post_date'] = date('d-m-Y');
-        $data['post_month'] = date("F");
+        // Add the authenticated user's ID to the data
+        $data['user_id'] = Auth::id();  // Get the authenticated user's ID
     
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $image_one = uniqid().'.'.$image->getClientOriginalExtension();
-            //\Image::make($image)->resize(500, 300)->save("image/postimg/$image_one");
-            $data['image'] = 'image/postimg/'.$image_one;
-        }
-    
-        DB::table('posts')->insert($data);
+        // Store the post using the Post model
+        Post::create($data);
     
         return redirect()->route('all.post')->with([
             'message' => 'Post Inserted Successfully',
@@ -79,106 +58,58 @@ class PostController extends Controller
         ]);
     }
 
-    public function editPost($id)
+    // Show edit post form
+    public function edit($id): View
     {
-        $post = DB::table('posts')->where('id', $id)->first();
+        $post = $this->postService->getPostById($id); // Ensure this returns the post
+        if (!$post) {
+            abort(404, 'Post not found'); // Handle case where post is not found
+        }
+
         $category = DB::table('categories')->get();
         $district = DB::table('districts')->get();
         return view('backend.post.edit', compact('post', 'category', 'district'));
     }
 
-    public function updatePost(Request $request, $id)
+    // Update an existing post
+    public function update(PostRequest $request, $id): RedirectResponse
     {
-        $validatedData = $request->validate([
-            'category_id' => 'required',
-            'district_id' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        $data = $request->only([
+            'title_en', 'title_hin', 'category_id', 'subcategory_id', 'district_id',
+            'subdistrict_id', 'tags_en', 'tags_hin', 'details_en', 'details_hin', 'headline',
+            'first_section', 'first_section_thumbnail', 'bigthumbnail', 'image'
         ]);
 
-        $data = $this->preparePostData($request);
+        $this->postService->updatePost($data, $id);
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imagePath = $this->uploadImage($image, 'postimg');
-
-            // Delete old image
-            if ($request->oldimage && file_exists($request->oldimage)) {
-                unlink($request->oldimage);
-            }
-
-            $data['image'] = $imagePath;
-        } else {
-            $data['image'] = $request->oldimage;
-        }
-
-        DB::table('posts')->where('id', $id)->update($data);
-
-        $notification = [
+        return redirect()->route('all.post')->with([
             'message' => 'Post Updated Successfully',
-            'alert-type' => 'success',
-        ];
-
-        return redirect()->route('all.post')->with($notification);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function deletePost($id)
+    // Delete a post
+    public function destroy($id): RedirectResponse
     {
-        $post = DB::table('posts')->where('id', $id)->first();
+        $this->postService->deletePost($id);
 
-        if ($post && file_exists($post->image)) {
-            unlink($post->image);
-        }
-
-        DB::table('posts')->where('id', $id)->delete();
-
-        $notification = [
+        return redirect()->route('all.post')->with([
             'message' => 'Post Deleted Successfully',
-            'alert-type' => 'error',
-        ];
-
-        return redirect()->route('all.post')->with($notification);
+            'alert-type' => 'error'
+        ]);
     }
 
+    // Fetch subcategories based on selected category
     public function getSubCategory($category_id)
     {
         $sub = DB::table('subcategories')->where('category_id', $category_id)->get();
         return response()->json($sub);
     }
 
+    // Fetch subdistricts based on selected district
     public function getSubDistrict($district_id)
     {
         $sub = DB::table('subdistricts')->where('district_id', $district_id)->get();
         return response()->json($sub);
-    }
-
-    private function preparePostData(Request $request)
-    {
-        return [
-            'title_en' => $request->title_en,
-            'title_hin' => $request->title_hin,
-            'user_id' => Auth::id(),
-            'category_id' => $request->category_id,
-            'subcategory_id' => $request->subcategory_id,
-            'district_id' => $request->district_id,
-            'subdistrict_id' => $request->subdistrict_id,
-            'tags_en' => $request->tags_en,
-            'tags_hin' => $request->tags_hin,
-            'details_en' => $request->details_en,
-            'details_hin' => $request->details_hin,
-            'headline' => $request->headline,
-            'first_section' => $request->first_section,
-            'first_section_thumbnail' => $request->first_section_thumbnail,
-            'bigthumbnail' => $request->bigthumbnail,
-            'post_date' => date('d-m-Y'),
-            'post_month' => date('F'),
-        ];
-    }
-
-    private function uploadImage($image, $folder)
-    {
-        $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
-        $imagePath = 'image/' . $folder . '/' . $imageName;
-      //  \Image::make($image)->resize(500, 300)->save(public_path($imagePath));
-        return $imagePath;
     }
 }
