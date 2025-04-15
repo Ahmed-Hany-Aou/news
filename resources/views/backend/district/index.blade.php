@@ -53,22 +53,24 @@
                           </tr>
                         </thead>
                         <tbody>
-               @php($i = 1)
-           @foreach($districts as $row)
-      <tr>
-        <td> {{ $i++ }} </td>
-        <td> {{ $row->district_en }} </td>
-         
-        <td>{{ $row->district_hin }} </td>
-        <td> 
-    <a href="{{ route('edit.district',$row->id) }}" class="btn btn-info">Edit</a>
-    <a href="{{ route('delete.district',$row->id) }}" onclick="return confirm('Are you sure to delete')" class="btn btn-danger">Delete</a>
-
-         </td>
-      </tr>
-      @endforeach
-                           
-                        </tbody>
+    @if($districts && $districts->count())
+        @foreach($districts as $district)
+            <tr>
+                <td>{{ $district->id }}</td>
+                <td>{{ $district->district_en }}</td> <!-- Replace 'name' with the actual column name -->
+                <td>{{ $district->district_hin	 }}</td> <!-- Replace 'name_hindi' with the actual column name -->
+                <td>
+                    <a href="{{ route('edit.district', $district->id) }}" class="btn btn-info">Edit</a>
+                    <a href="{{ route('delete.district', $district->id) }}" onclick="return confirm('Are you sure to delete?')" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        @endforeach
+    @else
+        <tr>
+            <td colspan="5">No districts found.</td>
+        </tr>
+    @endif
+</tbody>
                       </table>
                       {{ $districts->links('pagination-links') }}
                     </div>

@@ -8,10 +8,12 @@ use App\Http\Requests\DistrictRequest;
 use App\Services\DistrictServiceInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Models\District;
+use Illuminate\Support\Facades\DB;
 
 class DistrictController extends BaseController
 {
-    protected DistrictServiceInterface $districtService;
+    protected $districtService;
 
     // ✅ Apply auth middleware
     public function __construct(DistrictServiceInterface $districtService)
@@ -20,11 +22,24 @@ class DistrictController extends BaseController
         $this->districtService = $districtService;
     }
 
-    public function Index(): View
-    {
-        $districts = $this->districtService->getAllDistricts();
-        return view('backend.district.index', compact('districts'));
-    }
+    //public function Index(): View
+    //{
+    //    $districts = District::paginate(10); // Use Eloquent to paginate
+    //    return view('backend.district.index', compact('districts'));
+   // }
+
+    public function index()
+{
+    // Fetching districts with pagination
+    $districts = DB::table('districts')->paginate(10); // Paginate with 10 items per page
+    return view('backend.district.index', compact('districts'));
+}
+
+
+
+
+
+
 
     public function AddDistrict(): View
     {
@@ -65,6 +80,11 @@ class DistrictController extends BaseController
             'message' => 'District Deleted Successfully',
             'alert-type' => 'error'
         ]);
+    }
+
+    public function getAllDistricts()
+    {
+        return District::paginate(10); // Fetch 10 records per page
     }
 }
 
