@@ -9,6 +9,10 @@ use App\Repositories\SubDistrictRepository;
 use App\Repositories\SubDistrictRepositoryInterface;
 use App\Repositories\PostRepositoryInterface;
 use App\Repositories\PostRepository;
+use App\Services\DistrictServiceInterface;
+use App\Services\DistrictService;
+use App\Repositories\DistrictRepositoryInterface;
+use App\Repositories\DistrictRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +24,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CategoryServiceInterface::class, EnhancedCategoryService::class);
         $this->app->bind(SubDistrictRepositoryInterface::class, SubDistrictRepository::class);
         $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
-       // $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
+        $this->app->bind(DistrictServiceInterface::class, DistrictService::class);
+        // Bind the repository interface to its implementation
+        $this->app->bind(DistrictRepositoryInterface::class, DistrictRepository::class);
     }
 
     /**
