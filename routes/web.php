@@ -131,7 +131,9 @@ Route::get('/allpost', [PostController::class, 'index'])->name('all.post');
 
 Route::get('/createpost', [PostController::class, 'Create'])->name('create.post');
 
-Route::post('/store/post', [PostController::class, 'StorePost'])->name('store.post');
+//Route::post('/store/post', [PostController::class, 'StorePost'])->name('store.post');
+Route::post('/store/post', [PostController::class, 'store'])->name('store.post');
+
 
 Route::get('/edit/post/{id}', [PostController::class, 'EditPost'])->name('edit.post');
 

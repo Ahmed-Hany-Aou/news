@@ -39,14 +39,15 @@
                   <div class="card-body">
                     <h4 class="card-title">Edit Post</h4>
                     
- <form class="forms-sample" action="{{ route('update.post',$post->id ) }}" method="post" enctype="multipart/form-data">
+ <form class="forms-sample" action="{{ route('post.update', $post->id) }}" method="POST" enctype="multipart/form-data">
   @csrf
+  @method('PUT')
 
     <div class="row">
 
     <div class="form-group col-md-6">
       <label for="exampleInputName1">Title English</label>
-      <input type="text" class="form-control" id="exampleInputName1" name=" title_en" value="{{ $post->title_en }}">
+      <input type="text" class="form-control" id="exampleInputName1" name="title_en" value="{{ old('title_en', $post->title_en) }}">
     </div>
 
      <div class="form-group col-md-6">
