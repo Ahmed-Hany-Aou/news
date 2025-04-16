@@ -23,18 +23,10 @@ class PostController extends Controller
     }
 
     // Show all posts
-    public function index()
+    public function index(): View
     {
-        $posts = DB::table('posts')
-            ->join('categories', 'posts.category_id', '=', 'categories.id')
-            ->join('subcategories', 'posts.subcategory_id', '=', 'subcategories.id')
-            ->join('districts', 'posts.district_id', '=', 'districts.id')
-            ->join('subdistricts', 'posts.subdistrict_id', '=', 'subdistricts.id')
-            ->select('posts.*', 'categories.category_en', 'subcategories.subcategory_en', 'districts.district_en', 'subdistricts.subdistrict_en')
-            ->orderBy('posts.id', 'desc')
-            ->paginate(5); // This ensures pagination is used
-
-        return view('backend.post.index', compact('posts')); // Pass paginated posts to the view
+        $posts = $this->postService->getAllPosts();
+        return view('backend.post.index', compact('posts'));
     }
 
     // Show create post form
