@@ -59,6 +59,11 @@ class DistrictController extends BaseController
     public function EditDistrict($id): View
     {
         $district = $this->districtService->getDistrictById($id);
+
+        if (!$district) {
+            abort(404, 'District not found');
+        }
+
         return view('backend.district.edit', compact('district'));
     }
 
