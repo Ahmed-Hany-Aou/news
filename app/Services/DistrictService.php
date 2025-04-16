@@ -1,40 +1,43 @@
 <?php
+
 namespace App\Services;
 
-use App\Repositories\DistrictRepositoryInterface;
+use App\Models\District;
 
 class DistrictService implements DistrictServiceInterface
 {
-    protected DistrictRepositoryInterface $districtRepository;
-
-    public function __construct(DistrictRepositoryInterface $districtRepository)
-    {
-        $this->districtRepository = $districtRepository;
-    }
-
     public function getAllDistricts()
     {
-        return $this->districtRepository->getAllDistricts();
+        return District::paginate(10); // Retrieves all districts and paginates them
     }
 
     public function storeDistrict(array $data)
     {
-        // Logic to store a district
+        return District::create($data); // Creates a new district in the database
     }
 
     public function getDistrictById($id)
     {
-        // Logic to fetch a district by ID
+        return District::find($id); // Retrieves a district by its ID
     }
 
     public function updateDistrict(array $data, $id)
     {
-        // Logic to update a district
+        $district = District::find($id);
+        if ($district) {
+            $district->update($data); // Updates the district
+            return $district;
+        }
+        return null;
     }
 
     public function deleteDistrict($id)
     {
-        // Logic to delete a district
+        $district = District::find($id);
+        if ($district) {
+            $district->delete(); // Deletes the district
+            return true;
+        }
+        return false;
     }
 }
-
