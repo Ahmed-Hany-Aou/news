@@ -129,7 +129,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
    @else
    @endif   
 
-@if(Auth::user()->setting == 1)
+@if(Auth::user()->setting == 0)
           <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#setting" aria-expanded="false" aria-controls="setting">
               <span class="menu-icon">
@@ -140,7 +140,7 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             </a>
             <div class="collapse" id="setting">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('social.setting') }} --}}">Social Setting </a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('social.setting') }} ">Social Setting </a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('seo.setting') }} --}}">Seo Setting </a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('prayer.setting') }} --}}">Prayer Setting </a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('livetv.setting') }} --}}">Live Tv Setting </a></li>
