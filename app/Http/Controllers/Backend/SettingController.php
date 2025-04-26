@@ -88,10 +88,10 @@ class SettingController extends Controller
 
    	$data = array();
     	 $data['fajr'] = $request->fajr;
-    	 $data['johor'] = $request->johor;
-    	 $data['asor'] = $request->asor;
-    	 $data['magrib'] = $request->magrib;
-    	 $data['eaha'] = $request->eaha;
+    	 $data['dhuhr'] = $request->dhuhr;
+    	 $data['asr'] = $request->asr;
+    	 $data['maghrib'] = $request->maghrib;
+    	 $data['isha'] = $request->isha;
     	 $data['jummah'] = $request->jummah;
     	 DB::table('prayers')->where('id',$id)->update($data);
 
@@ -223,9 +223,49 @@ public function ActiveNoticeSetting(Request $request, $id){
     	 	'alert-type' => 'success'
     	 );
 
-    	 return Redirect()->route('all.website')->with($notification);
+    	 return Redirect()->route('website.setting')->with($notification);
  	}
 
+public function WebsiteAll()
+{
+    // Fetch all websites from the database
+    $websites = DB::table('websites')->orderBy('id', 'desc')->get();
 
+    // Pass the websites data to the view
+    return view('backend.website.all', compact('websites'));
+}
 
+public function EditWebsite($id)
+{
+    $website = DB::table('websites')->where('id', $id)->first();
+    return view('backend.website.edit', compact('website'));
+}
+
+public function UpdateWebsite(Request $request, $id)
+{
+    $data = array();
+    $data['website_name'] = $request->website_name;
+    $data['website_link'] = $request->website_link;
+
+    DB::table('websites')->where('id', $id)->update($data);
+
+    $notification = array(
+        'message' => 'Website Link Updated Successfully',
+        'alert-type' => 'success'
+    );
+
+    return Redirect()->route('website.setting')->with($notification);
+}
+
+public function DeleteWebsite($id)
+{
+    DB::table('websites')->where('id', $id)->delete();
+
+    $notification = array(
+        'message' => 'Website Link Deleted Successfully',
+        'alert-type' => 'success'
+    );
+
+    return Redirect()->route('website.setting')->with($notification);
+}
 }

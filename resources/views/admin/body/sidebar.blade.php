@@ -141,11 +141,11 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             <div class="collapse" id="setting">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href=" {{ route('social.setting') }} ">Social Setting </a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('seo.setting') }} --}}">Seo Setting </a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('prayer.setting') }} --}}">Prayer Setting </a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('livetv.setting') }} --}}">Live Tv Setting </a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('notice.setting') }} --}}">Notice Setting </a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('website.setting') }} --}}">Website Settings </a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('seo.setting')   }}">Seo Setting </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('prayer.setting') }} ">Prayer Setting </a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('livetv.setting') }} ">Live Tv Setting </a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('notice.setting') }} ">Notice Setting </a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('website.setting')}}">Website Settings </a></li>
               </ul>
             </div>
           </li>
@@ -163,8 +163,8 @@ $editData = DB::table('users')->where('id',Auth::user()->id)->first();
             </a>
             <div class="collapse" id="website">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('add.website') }} --}}">Add Website Link</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{-- {{ route('all.website') }} --}}">All Website Link </a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('add.website') }} ">Add Website Link</a></li>
+                <li class="nav-item"> <a class="nav-link" href=" {{ route('all.website') }} ">All Website Link </a></li>
               </ul>
             </div>
           </li>
