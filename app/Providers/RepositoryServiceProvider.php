@@ -13,6 +13,10 @@ use App\Services\SubCategoryServiceInterface;
 use App\Services\SubCategoryService;
 use App\Repositories\SubCategoryRepositoryInterface;
 use App\Repositories\SubCategoryRepository;
+use App\Services\SettingServiceInterface;
+use App\Services\SettingService;
+use App\Repositories\SettingRepositoryInterface;
+use App\Repositories\SettingRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -47,6 +51,11 @@ class RepositoryServiceProvider extends ServiceProvider
             SubCategoryRepositoryInterface::class,
             SubCategoryRepository::class
         );
+
+        $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
+        
+        // Service bindings
+        $this->app->bind(SettingServiceInterface::class, SettingService::class);
     }
 
     /**

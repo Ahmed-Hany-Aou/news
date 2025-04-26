@@ -2,270 +2,205 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
+use App\Services\SettingServiceInterface;
 use Illuminate\Http\Request;
-use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SettingController extends Controller
 {
+    protected $settingService;
 
-
-        public function __construct(){
-        $this->middleware('auth');
+    public function __construct(SettingServiceInterface $settingService)
+    {
+        $this->middleware = 'auth';
+        $this->settingService = $settingService;
     }
 
-    
     public function socialSetting()
     {
         if (!Auth::check()) {
-            return redirect()->route('login'); // Redirect to login if not authenticated
+            return redirect()->route('login');
         }
 
-        // Fetch social settings from the database
-        $social = DB::table('socials')->first();
-
-        // Pass the $social variable to the view
+        $social = $this->settingService->getSocialSettings();
         return view('backend.setting.social', compact('social'));
     }
 
+    public function SocialUpdate(Request $request, $id)
+    {
+        $data = $request->only(['facebook', 'twitter', 'youtube', 'linkedin', 'instagram']);
+        $this->settingService->updateSocialSettings($data, $id);
 
-   public function SocialUpdate(Request $request, $id){
+        $notification = [
+            'message' => 'Social Setting Updated Successfully',
+            'alert-type' => 'success'
+        ];
 
-   	$data = array();
-    	 $data['facebook'] = $request->facebook;
-    	 $data['twitter'] = $request->twitter;
-    	 $data['youtube'] = $request->youtube;
-    	 $data['linkedin'] = $request->linkedin;
-    	 $data['instagram'] = $request->instagram;
-    	 DB::table('socials')->where('id',$id)->update($data);
-
-    	 $notification = array(
-    	 	'message' => 'Social Setting Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('social.setting')->with($notification);
-   }
-
-
-   public function SeoSetting(){
-    	$seo = DB::table('seos')->first();
-    	return view('backend.setting.seo',compact('seo'));
+        return redirect()->route('social.setting')->with($notification);
     }
 
-
-
-    public function SeoUpdate(Request $request, $id){
-
-   	$data = array();
-    	 $data['meta_author'] = $request->meta_author;
-    	 $data['meta_title'] = $request->meta_title;
-    	 $data['meta_keyword'] = $request->meta_keyword;
-    	 $data['meta_description'] = $request->meta_description;
-    	 $data['google_analytics'] = $request->google_analytics;
-    	 $data['google_verification'] = $request->google_verification;
-    	 $data['alexa_analytics'] = $request->alexa_analytics;
-    	 DB::table('seos')->where('id',$id)->update($data);
-
-    	 $notification = array(
-    	 	'message' => 'Seo Setting Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('seo.setting')->with($notification);
-   }// end Methos 
-
-
-
-   public function PrayerSetting(){
-    	$prayer = DB::table('prayers')->first();
-    	return view('backend.setting.prayer',compact('prayer'));
+    public function SeoSetting()
+    {
+        $seo = $this->settingService->getSeoSettings();
+        return view('backend.setting.seo', compact('seo'));
     }
 
+    public function SeoUpdate(Request $request, $id)
+    {
+        $data = $request->only(['meta_author', 'meta_title', 'meta_keyword', 'meta_description', 'google_analytics', 'google_verification', 'alexa_analytics']);
+        $this->settingService->updateSeoSettings($data, $id);
 
-    public function PrayerUpdate(Request $request, $id){
+        $notification = [
+            'message' => 'SEO Setting Updated Successfully',
+            'alert-type' => 'success'
+        ];
 
-   	$data = array();
-    	 $data['fajr'] = $request->fajr;
-    	 $data['dhuhr'] = $request->dhuhr;
-    	 $data['asr'] = $request->asr;
-    	 $data['maghrib'] = $request->maghrib;
-    	 $data['isha'] = $request->isha;
-    	 $data['jummah'] = $request->jummah;
-    	 DB::table('prayers')->where('id',$id)->update($data);
+        return redirect()->route('seo.setting')->with($notification);
+    }
 
-    	 $notification = array(
-    	 	'message' => 'Prayers Setting Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
+    public function PrayerSetting()
+    {
+        $prayer = $this->settingService->getPrayerSettings();
+        return view('backend.setting.prayer', compact('prayer'));
+    }
 
-    	 return Redirect()->route('prayer.setting')->with($notification);
-   }
+    public function PrayerUpdate(Request $request, $id)
+    {
+        $data = $request->only(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha', 'jummah']);
+        $this->settingService->updatePrayerSettings($data, $id);
 
+        $notification = [
+            'message' => 'Prayers Setting Updated Successfully',
+            'alert-type' => 'success'
+        ];
 
+        return redirect()->route('prayer.setting')->with($notification);
+    }
 
+    public function LiveTvSetting()
+    {
+        // Fetch the first Live TV setting from the 'livetv' table
+        $livetv = DB::table('livetvs')->first();
 
- 	public function LiveTvSetting(){
- 		$livetv = DB::table('livetvs')->first();
- 		return view('backend.setting.livetv',compact('livetv'));
- 	}
+        // Provide default values if no record is found
+        if (!$livetv) {
+            $livetv = (object) [
+                'id' => null,
+                'status' => 0, // Default status (inactive)
+                'embed_code' => '', // Default embed code
+            ];
+        }
 
+        return view('backend.setting.livetv', compact('livetv'));
+    }
 
-   public function LivetvUpdate(Request $request, $id){
+    public function WebsiteSetting()
+    {
+        // Fetch the first website setting from the 'websites' table
+        $websitesetting = DB::table('websites')->select('id', 'website_name')->first();
 
-   	$data = array();
-    	 $data['embed_code'] = $request->embed_code;
-    	 
-    	 DB::table('livetvs')->where('id',$id)->update($data);
+        // Check if the result is null, then assign default values
+        if (!$websitesetting) {
+            $websitesetting = (object) ['id' => null, 'logo' => '']; // Default values
+        }
 
-    	 $notification = array(
-    	 	'message' => 'Live Tv Setting Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
+        return view('backend.setting.website', compact('websitesetting'));
+    }
 
-    	 return Redirect()->route('livetv.setting')->with($notification);
-   }
+    public function NoticeSetting()
+    {
+        // Fetch the first notice setting from the 'notices' table
+        $notice = DB::table('notices')->first();
 
+        // Provide default values if no record is found
+        if (!$notice) {
+            $notice = (object) [
+                'id' => null,
+                'notice' => '',
+                'status' => 0, // Default status (e.g., inactive)
+            ];
+        }
 
- 	public function ActiveSetting(Request $request, $id){
- 		DB::table('livetvs')->where('id',$id)->update(['status'=>1]);
- 		$notification = array(
-    	 	'message' => 'Live Tv Active Successfully',
-    	 	'alert-type' => 'success'
-    	 );
+        return view('backend.setting.notice', compact('notice'));
+    }
 
-    	 return Redirect()->back()->with($notification);
- 	}
+    public function NoticeUpdate(Request $request, $id)
+    {
+        // Validate the request
+        $request->validate([
+            'notice' => 'required|string|max:255',
+        ]);
 
+        // Update the notice in the database
+        DB::table('notices')->where('id', $id)->update([
+            'notice' => $request->notice,
+            'updated_at' => now(),
+        ]);
 
- 		public function DeActiveSetting(Request $request, $id){
- 		DB::table('livetvs')->where('id',$id)->update(['status'=>0]);
- 		$notification = array(
-    	 	'message' => 'Live Tv DeActive Successfully',
-    	 	'alert-type' => 'success'
-    	 );
+        // Return a success notification
+        $notification = [
+            'message' => 'Notice Updated Successfully',
+            'alert-type' => 'success',
+        ];
 
-    	 return Redirect()->back()->with($notification);
- 	}
+        return redirect()->route('notice.setting')->with($notification);
+    }
 
+    public function DeActiveSetting($id)
+    {
+        // Update the status of the Live TV setting to inactive (0)
+        DB::table('livetvs')->where('id', $id)->update([
+            'status' => 0,
+            'updated_at' => now(),
+        ]);
 
- 	public function NoticeSetting(){
- 		$notice = DB::table('notices')->first();
- 		return view('backend.setting.notice',compact('notice'));
- 	}
+        // Return a success notification
+        $notification = [
+            'message' => 'Live TV Deactivated Successfully',
+            'alert-type' => 'success',
+        ];
 
+        return redirect()->route('livetv.setting')->with($notification);
+    }
 
- public function NoticeUpdate(Request $request, $id){
+    public function ActiveNoticeSetting($id)
+    {
+        // Update the notice status to active (1)
+        DB::table('notices')->where('id', $id)->update([
+            'status' => 1,
+            'updated_at' => now(),
+        ]);
 
-   	$data = array();
-    	 $data['notice'] = $request->notice;
-    	 
-    	 DB::table('notices')->where('id',$id)->update($data);
+        // Return a success notification
+        $notification = [
+            'message' => 'Notice Activated Successfully',
+            'alert-type' => 'success',
+        ];
 
-    	 $notification = array(
-    	 	'message' => 'Notice Setting Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
+        return redirect()->route('notice.setting')->with($notification);
+    }
 
-    	 return Redirect()->route('notice.setting')->with($notification);
-   }
+    public function LivetvUpdate(Request $request, $id)
+    {
+        // Validate the request
+        $request->validate([
+            'embed_code' => 'required|string',
+        ]);
 
+        // Update the Live TV setting in the database
+        DB::table('livetvs')->where('id', $id)->update([
+            'embed_code' => $request->embed_code,
+            'updated_at' => now(),
+        ]);
 
+        // Return a success notification
+        $notification = [
+            'message' => 'Live TV Updated Successfully',
+            'alert-type' => 'success',
+        ];
 
-public function ActiveNoticeSetting(Request $request, $id){
-
- 		DB::table('notices')->where('id',$id)->update(['status'=>1]);
- 		$notification = array(
-    	 	'message' => 'Notice Active Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->back()->with($notification);
- 	}
-
-
- 		public function DeActiveNoticeSetting(Request $request, $id){
-
- 		DB::table('notices')->where('id',$id)->update(['status'=>0]);
- 		$notification = array(
-    	 	'message' => 'Notice DeActive Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->back()->with($notification);
- 	}
-
-
-
- 	public function WebsiteSetting(){
- 		$website =  DB::table('websites')->orderBy('id','desc')->paginate(5);
- 		return view('backend.website.index',compact('website'));
- 	}
-
-
- 	public function AddWebsiteSetting(){
- 		return view('backend.website.create');
- 	}
-
-
-
- 	public function StoreWebsite(Request $request){
-
- 		$data = array();
-    	 $data['website_name'] = $request->website_name;
-    	 $data['website_link'] = $request->website_link;
-    	 
-    	 DB::table('websites')->insert($data);
-
-    	 $notification = array(
-    	 	'message' => 'Website Link Updated Successfully',
-    	 	'alert-type' => 'success'
-    	 );
-
-    	 return Redirect()->route('website.setting')->with($notification);
- 	}
-
-public function WebsiteAll()
-{
-    // Fetch all websites from the database
-    $websites = DB::table('websites')->orderBy('id', 'desc')->get();
-
-    // Pass the websites data to the view
-    return view('backend.website.all', compact('websites'));
-}
-
-public function EditWebsite($id)
-{
-    $website = DB::table('websites')->where('id', $id)->first();
-    return view('backend.website.edit', compact('website'));
-}
-
-public function UpdateWebsite(Request $request, $id)
-{
-    $data = array();
-    $data['website_name'] = $request->website_name;
-    $data['website_link'] = $request->website_link;
-
-    DB::table('websites')->where('id', $id)->update($data);
-
-    $notification = array(
-        'message' => 'Website Link Updated Successfully',
-        'alert-type' => 'success'
-    );
-
-    return Redirect()->route('website.setting')->with($notification);
-}
-
-public function DeleteWebsite($id)
-{
-    DB::table('websites')->where('id', $id)->delete();
-
-    $notification = array(
-        'message' => 'Website Link Deleted Successfully',
-        'alert-type' => 'success'
-    );
-
-    return Redirect()->route('website.setting')->with($notification);
-}
+        return redirect()->route('livetv.setting')->with($notification);
+    }
 }
