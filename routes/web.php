@@ -8,8 +8,11 @@ use App\Http\Controllers\Backend\DistrictController;
 use App\Http\Controllers\Backend\SubDistrictController;
 use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\SettingController;
+use App\Http\Controllers\Backend\GalleryController;
 
 
+
+ 
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -22,7 +25,9 @@ use App\Http\Controllers\Backend\SettingController;
 */
 
 // Home Page
-Route::view('/', 'welcome')->name('home');
+Route ::get('/',function(){
+    return view('main.home');
+});
 
 /*
 |--------------------------------------------------------------------------
