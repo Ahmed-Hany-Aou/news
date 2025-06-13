@@ -5,7 +5,7 @@
 			<div class="row">
 				<div class="col-xs-6 col-md-2 col-sm-4">
 					<div class="header_logo">
-						<a href=""><img src="assets/img/demo_logo.png"></a> 
+			<a href=""><img src="{{ asset('frontend/assets/img/demo_logo.png') }}"></a>
 					</div>
 				</div>              
 				<div class="col-xs-6 col-md-8 col-sm-8">
@@ -113,7 +113,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2">
-					<div class="top-add"><img src="assets/img/top-ad.jpg" alt="" /></div>
+					<div class="top-add"><img src=" {{ asset('frontend/assets/img/top-ad.jpg') }}" alt="" /></div>
 				</div>
 			</div>
 		</div>
