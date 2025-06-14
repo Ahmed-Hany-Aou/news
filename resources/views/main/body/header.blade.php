@@ -33,16 +33,33 @@ $subcategory = DB::table('subcategories')->where('category_id',$row->id)->get();
 @endphp
 
 		<li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{$row->category_en}} <b class="caret"></b></a>
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				@if(session()->get('lang')== 'hindi')
+				{{$row->category_hin}}
+				@else
+				{{$row->category_en}}
+				@endif
+
+				<b class="caret"></b>
+
 		<ul class="dropdown-menu">
 			@foreach($subcategory as $row )
-			<li><a href="#">{{$row->subcategory_en}}</a></li>
+			
+			<li><a href="#">
+				@if(session()->get('lang')== 'hindi')
+				{{$row->subcategory_hin}}
+				@else
+				{{$row->subcategory_en}}
+				@endif
+			
+			
+			</a></li>
 			@endforeach
 		</ul>
 		</li>
 		@endforeach
 
-		
+
 								</div>
 							</nav>											
 						</div>
@@ -52,7 +69,14 @@ $subcategory = DB::table('subcategories')->where('category_id',$row->id)->get();
 					<div class="header-icon">
 						<ul>
 							<!-- version-start -->
-							<li class="version"><a href="#"><B>HINDI</B></a></li>&nbsp;&nbsp;&nbsp;
+						
+@if(session()->get('lang') == 'hindi')
+<li class="version"><a href="{{ route('lang.english') }}"><B>ENGLISH</B></a></li
+>&nbsp;&nbsp;&nbsp;
+@else
+<li class="version"><a href="{{ route("lang.hindi") }}"><b>HINDI</B></a></li
+>&nbsp;&nbsp;&nbsp;
+@endif
 							<!-- login-start -->
 						
 							<!-- search-start -->
