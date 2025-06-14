@@ -9,6 +9,8 @@ use App\Http\Controllers\Backend\SubDistrictController;
 use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\GalleryController;
+use App\Http\Controllers\Frontend\ExtraController;
+
 
 
 
@@ -196,6 +198,19 @@ Route::get('/edit-website/{id}', [SettingController::class, 'EditWebsite'])->nam
 Route::post('/update-website/{id}', [SettingController::class, 'UpdateWebsite'])->name('update.websetting');
 
 Route::get('/delete-website/{id}', [SettingController::class, 'DeleteWebsite'])->name('delete.website');
+
+
+//Frontend
+//Multi Langusage Routes
+
+Route::get('/lang/hindi', [ExtraController::class, 'Hindi'])->name('lang.hindi');
+Route::get('/lang/english', [ExtraController::class, 'English'])->name('lang.english');
+
+
+
+
+
+
 
 
 require __DIR__.'/auth.php';
