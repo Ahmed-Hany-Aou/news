@@ -165,6 +165,26 @@ class SettingController extends Controller
         return redirect()->route('livetv.setting')->with($notification);
     }
 
+
+    public function ActiveSetting($id)
+    {
+        DB::table('livetvs')->where('id',$id)->update([
+            'status'=>1,
+            'updated_at'=>now(),
+             ]);
+         // Return a success notification
+        $notification = [
+            'message' => 'Live TV Deactivated Successfully',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('livetv.setting')->with($notification);     
+    
+    }
+
+
+
+
     public function ActiveNoticeSetting($id)
     {
         // Update the notice status to active (1)
