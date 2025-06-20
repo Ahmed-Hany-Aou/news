@@ -455,7 +455,91 @@
                         </div>
                     </div>
                     <div class="cetagory-title-03">Prayer Time </div>
-                    Prayer Times count option here
+                @php
+$prayer = DB::table('prayers')->first();
+@endphp
+
+	<!-- Namaj Times -->
+	<div class="cetagory-title-03">
+@if(session()->get('lang')== 'english')
+		Prayer Time 
+		@else
+		प्रार्थना का समय
+		@endif
+	
+
+</div>
+
+<table class="table">
+	<tr>
+		<th>
+		@if(session()->get('lang')== 'english')
+		Fajr 
+		@else
+		फज्र
+		@endif </th>
+		<th>{{ $prayer->fajr }} </th>
+	</tr>
+
+	<tr>
+		<th>
+		@if(session()->get('lang')== 'english')
+		Dhuhr
+		@else
+		जोहोर
+		@endif </th>
+		<th>{{ $prayer->dhuhr }} </th>
+	</tr>
+
+
+	<tr>
+		<th>
+		@if(session()->get('lang')== 'english')
+		Asr
+		@else
+		आसो
+		@endif </th>
+		<th>{{ $prayer->asr }} </th>
+	</tr>
+
+
+	<tr>
+		<th>
+		@if(session()->get('lang')== 'english')
+		Maghrib 
+		@else
+		फज्र
+		@endif </th>
+		<th>{{ $prayer->maghrib }} </th>
+	</tr>
+
+
+	<tr>
+		<th>
+		@if(session()->get('lang')== 'english')
+		Isha
+		@else
+		फज्र
+		@endif </th>
+		<th>{{ $prayer->isha }} </th>
+	</tr>
+
+	<tr>
+		<th>
+		@if(session()->get('lang')== 'english')
+		Jummah
+		@else
+		फज्र
+		@endif </th>
+		<th>{{ $prayer->jummah }} </th>
+	</tr>
+
+
+
+	
+
+</table>
+	<!-- Namaj Times -->
                     <div class="cetagory-title-03">Old News </div>
                     <form action="" method="post">
                         <div class="old-news-date">
