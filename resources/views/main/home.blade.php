@@ -133,13 +133,22 @@
                         <div class="col-md-12 col-sm-12">
                             <div class="sidebar-add"><img src="{{ asset('assets/img/add_01.jpg') }}" alt="Advertisement" /></div>
                         </div>
+
+                        @php
+                        $livetv = DB::table('livetvs')->first();
+                        @endphp
+                        @if($livetv->status==1)
                     </div><div class="cetagory-title-03">Live TV</div>
                     <div class="photo">
                         <div class="embed-responsive embed-responsive-16by9 embed-responsive-item" style="margin-bottom:5px;">
-                            {{-- Corrected YouTube embed URL (example, replace 'VIDEO_ID' with actual ID) --}}
-                            <iframe width="729" height="410" src="https://www.youtube.com/embed/VIDEO_ID_LIVE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            {!! $livetv -> embed_code !!}
                         </div>
-                    </div><div class="cetagory-title-03">Facebook </div>
+                    </div>
+                    @endif
+                    
+                    
+                    
+                    <div class="cetagory-title-03">Facebook </div>
                     <div class="fb-root">
                         facebook page here
                     </div><div class="row">
