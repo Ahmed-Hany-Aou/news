@@ -173,7 +173,7 @@ Route::get('/livetv/setting', [SettingController::class, 'LiveTvSetting'])->name
 
 Route::post('/livetv/update/{id}', [SettingController::class, 'LivetvUpdate'])->name('update.livetv');
 
-Route::get('/livetv/active/{id}', [SettingController::class, 'ActiveSetting'])->name('active.livetv');
+Route::get('/livetv/active/{id}', [SettingController::class, 'ActiveSetting'])->name('active.livetv');//ActiveSetting was missing setting controller 
 
 Route::get('/livetv/deactive/{id}', [SettingController::class, 'DeActiveSetting'])->name('deactive.livetv');
 
