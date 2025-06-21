@@ -1,0 +1,61 @@
+# docker-compose.yml
+version: '3.8' # You can remove this line as discussed, it's just a warning.
+
+services:
+  # PHP-FPM Service
+  app:
+    build:
+      context: ./docker/php-fpm
+      dockerfile: Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    container_name: laravel-app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html # Mount your Laravel project source code
+      - app_vendor:/var/www/html/vendor # <--- NEW: Named volume for vendor
+      - app_node_modules:/var/www/html/node_modules # <--- NEW: Named volume for node_modules
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: laravel-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 1973
+      MYSQL_DATABASE: news
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  # Redis Service (Optional, for caching/queues)
+  redis:
+    image: redis:alpine
+    container_name: laravel-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  db_data:
+  app_vendor: {} # <--- NEW: Define the named volume for vendor
+  app_node_modules: {} # <--- NEW: Define the named volume for node_modules
